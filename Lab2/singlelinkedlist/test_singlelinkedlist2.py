@@ -22,6 +22,7 @@
 import pylint
 import pytest 
 import config 
+from .context import sample
 from DataStructures import singlelinkedlist as slt
 
 
