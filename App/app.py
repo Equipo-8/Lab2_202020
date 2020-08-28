@@ -32,6 +32,7 @@ import csv
 from ADT import list as lt
 from DataStructures import listiterator as it
 from DataStructures import liststructure as lt
+from Sorting import mergesort as me
 
 from time import process_time 
 
@@ -83,6 +84,57 @@ def encontrar_buenas_peliculas(peliculas,casting,director):
             goodmovies[1]+=float(movie["vote_average"])
     goodmovies[1]=round(goodmovies[1]/goodmovies[0],2)
     return goodmovies
+
+def ordenarAverageAsc(mov1:dict,mov2:dict)->bool:
+    if float(mov1['vote_average'])>float(mov2['vote_average']):
+        return True
+    return False
+def ordenarAverageDesc(mov1:dict,mov2:dict)->bool:
+    if float(mov1['vote_average'])<float(mov2['vote_average']):
+        return True
+    return False
+def ordenarCountAsc(mov1:dict,mov2:dict)->bool:
+    if float(mov1['vote_count'])>float(mov2['vote_count']):
+        return True
+    return False
+def ordenarCountDesc(mov1:dict,mov2:dict)->bool:
+    if float(mov1['vote_count'])<float(mov2['vote_count']):
+        return True
+    return False
+
+
+def crear_ranking_peliculas(peliculas,n_peliculas,CoA,ascOdesc):
+    lista_return=[]
+    iterador=it.newIterator(peliculas)
+    if CoA == True:
+        if ascOdesc == True:
+            me.mergesort(peliculas,ordenarCountAsc)
+
+        elif ascOdesc == False:
+             me.mergesort(peliculas,ordenarCountDesc)
+            
+    elif CoA== False:
+        if ascOdesc ==True:
+            me.mergesort(peliculas,ordenarAverageAsc)
+        elif ascOdesc == False:
+             me.mergesort((peliculas, ordenarAverageDesc))
+
+    while n_peliculas != -1 and it.hasNext(iterador):
+            n_peliculas =- -1 
+            movie = it.next(iterador)
+            lista_return.append(movie)
+
+    return lista_return
+            
+
+
+    
+
+
+    
+
+
+
 
 def printMenu():
     """
@@ -170,11 +222,35 @@ def main():
                     goodmovies=encontrar_buenas_peliculas(listamovies,listacasting,director)
                     print("Las buenas películas de "+director+" son: "+str(goodmovies[0]))
                     print("El ranking promedio de las mismas es: "+str(goodmovies[1]))
-            elif int(inputs[0]==4):#opcion4
+            elif int(inputs[0])==4:#opcion4
                    if listacasting == None or listamovies == None:
                         print("esta lista esta vacia:(" )
-                   else: 
-                         print("El ranking de películas es: ", lista)  
+                   else:
+
+                        cantidad = int(input("escriba la cantidad de películas que quiere en el ranking, debe ser mayor o igual a 10: "))
+                        
+                        while 10>cantidad:
+                            print("la cantidad debe ser mayor a 10.")
+                            cantidad=int(input("Escriba la cantidad de peliculas que quiere en el ranking"))
+                        AoC=input("Escriba Averague, de lo contrario escriba Count:").title()
+                        ascOdesc= input("Segun el orden que quiera escriba ascendente o descendente:").title()
+                        if AoC == "Averague":
+                            if ascOdesc == "Ascendente":
+                                lista_final=crear_ranking_peliculas(listamovies,cantidad,True,True)
+                            elif ascOdesc == "Descendente":
+                                lista_final=crear_ranking_peliculas(listamovies,cantidad,True,False)
+                            
+                        elif AoC == "Count":
+                            if ascOdesc == "Ascendente":
+                                lista_final=crear_ranking_peliculas(listamovies,cantidad,False,True)
+                            elif ascOdesc == "Descendente":
+                                lista_final=crear_ranking_peliculas(listamovies,cantidad,False,False)
+                        if len(lista_final)>0:
+                            print("El ranking de películas es: ",lista_final)
+                    
+                        
+                        
+                          
             elif int(inputs[0]==5):#opcion5
                  if listacasting == None or listamovies == None:
                      print("esta lista esta vacia:(" )
