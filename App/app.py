@@ -66,16 +66,40 @@ def loadCSVFile (file, sep=";"):
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
     return lst
 
+def encontrar_buenas_peliculas(peliculas,casting,director):
+    iteradorcasting=it.newIterator(casting)
+    idmovies=[]
+    goodmovies=[0,0]
+    position=0
+    while it.hasNext(iteradorcasting):
+        movie=it.next(iteradorcasting)
+        if director.lower() == movie["director_name"].lower():
+            idmovies.append(position)
+        position+=1
+    for each in idmovies:
+        movie=lt.getElement(peliculas,each)
+        if float(movie["vote_average"])>=6.0:
+            goodmovies[0]+=1
+            goodmovies[1]+=float(movie["vote_average"])
+    goodmovies[1]=round(goodmovies[1]/goodmovies[0],2)
+    return goodmovies
 
 def printMenu():
     """
     Imprime el menu de opciones
     """
     print("\nBienvenido")
-    print("1- Cargar Datos")
-    print("2- Contar los elementos de la Lista")
-    print("3- Contar elementos filtrados por palabra clave")
-    print("4- Consultar elementos a partir de dos listas")
+    print("1- Cargar Datos Movies Casting")
+    print("2- Cargar Datos Movies Details")
+    print("3- Cargar buenas películas")
+    print("4- Crear ranking de películas")
+    print("5- Conocer a un director")
+    print("5- conocer a un actor")
+    print("6- Entender un género cinematográgico")
+    print("7- Crear ranking del género")
+    print("8- Contar los elementos de la Lista")
+    print("9- Contar elementos filtrados por palabra clave")
+    print("10- Consultar elementos a partir de dos listas")
     print("0- Salir")
 
 def countElementsFilteredByColumn(criteria, column, lst):
@@ -118,7 +142,6 @@ def orderElementsByCriteria(function, column, lst, elements):
     Retorna una lista con cierta cantidad de elementos ordenados por el criterio
     """
     return 0
-
 def main():
     """
     Método principal del programa, se encarga de manejar todos los metodos adicionales creados
@@ -127,27 +150,59 @@ def main():
     Args: None
     Return: None 
     """
-    lista = lt.newList()   # se require usar lista definida
+    listacasting = None   # se require usar lista definida
+    listamovies = None
     while True:
         printMenu() #imprimir el menu de opciones en consola
         inputs =input('Seleccione una opción para continuar\n') #leer opción ingresada
         if len(inputs)>0:
             if int(inputs[0])==1: #opcion 1
-                lista = loadCSVFile("Data/test.csv") #llamar funcion cargar datos
+                listamovies = loadCSVFile("Data/AllMoviesCastingRaw.csv") #llamar funcion cargar datos
                 print("Datos cargados, ",lista['size']," elementos cargados")
-            elif int(inputs[0])==2: #opcion 2
-                if lista==None or lista['size']==0: #obtener la longitud de la lista
+            elif int(inputs[0])==2: #opcion2
+                 listacasting = loadCSVFile("Data/AllMoviesDetailsCleaned.csv")
+                 print("Datos cargados, ",lista['size']," elementos cargados")
+            elif int(inputs[0]==3):#opcion3
+                    if listacasting == None or listamovies == None:
+                        print("esta lista esta vacia:(" )
+                    else: 
+                        director=input("Inserta el nombre del director a consultar: ")
+                        goodmovies=encontrar_buenas_peliculas(listamovies,listacasting,director)
+                        print("Las buenas películas de "+director+" son: "+goodmovies[0])
+                        print("El ranking promedio de las mismas es: "+goodmovies[1])
+            elif int(inputs[0]==4):#opcion4
+                   if listacasting == None or listamovies == None:
+                        print("esta lista esta vacia:(" )
+                   else: 
+                         print("El ranking de películas es: ", lista)  
+            elif int(inputs[0]==5):#opcion5
+                 if listacasting == None or listamovies == None:
+                     print("esta lista esta vacia:(" )
+                 else: 
+                     print("Los datos del actor son: ", lista)
+            elif int(inputs[0]==6):#opcion6
+                 if listacasting == None or listamovies == None:
+                     print("esta lista esta vacia:(" )
+                 else: 
+                     print("Las caracteristicas del geénero son: ", lista)
+            elif int(inputs[0])==7:#opcion7
+                 if listacasting == None or listamovies == None:
+                     print("esta lista esta vacia:(" )
+                 else: 
+                     print("La lista con el ranking del género es: ", lista)
+            elif int(inputs[0])==8:#opcion8
+                if listacasting==None or listamovies==None or listacasting['size']==0 or listamovies['size']==0: #obtener la longitud de la lista
                     print("La lista esta vacía")    
                 else: print("La lista tiene ",lista['size']," elementos")
-            elif int(inputs[0])==3: #opcion 3
-                if lista==None or lista['size']==0: #obtener la longitud de la lista
+            elif int(inputs[0])==9: #opcion 9
+                if listacasting==None or listamovies==None or listacasting['size']==0 or listamovies['size']==0: #obtener la longitud de la lista
                     print("La lista esta vacía")
                 else:   
                     criteria =input('Ingrese el criterio de búsqueda\n')
                     counter=countElementsFilteredByColumn(criteria, "nombre", lista) #filtrar una columna por criterio  
                     print("Coinciden ",counter," elementos con el crtierio: ", criteria  )
-            elif int(inputs[0])==4: #opcion 4
-                if lista==None or lista['size']==0: #obtener la longitud de la lista
+            elif int(inputs[0])==10: #opcion 10
+                if listacasting==None or listamovies==None or listacasting['size']==0 or listamovies['size']==0: #obtener la longitud de la lista
                     print("La lista esta vacía")
                 else:
                     criteria =input('Ingrese el criterio de búsqueda\n')
