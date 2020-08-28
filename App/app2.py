@@ -2,7 +2,7 @@ import config as cf
 import sys
 import csv
 from ADT import list as lt
-from DataStructures import listiterator as it
+from DataStructures import arraylistiterator as it
 from DataStructures import liststructure as lt
 
 from time import process_time 
@@ -38,5 +38,26 @@ def loadCSVFile (file, sep=";"):
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
     return lst
 
-def encontrar_buenas_peliculas(peliculas,director,casting):
-    lt.
+listamovies=(loadCSVFile("Data/AllMoviesCastingRaw.csv"))
+listacasting=(loadCSVFile("Data/AllMoviesDetailsCleaned.csv"))
+director="Quentin Tarantino"
+
+
+def encontrar_buenas_peliculas(peliculas,casting,director):
+    iteradorcasting=it.newIterator(casting)
+    idmovies=[]
+    goodmovies=[0,0]
+    position=0
+    while it.hasNext(iteradorcasting):
+        movie=it.next(iteradorcasting)
+        if director.lower() == movie["director_name"].lower():
+            idmovies.append(position)
+        position+=1
+    for each in idmovies:
+        movie=lt.getElement(peliculas,each)
+        if float(movie["vote_average"])>=6.0:
+            goodmovies[0]+=1
+            goodmovies[1]+=float(movie["vote_average"])
+    goodmovies[1]=round(goodmovies[1]/goodmovies[0],2)
+    return goodmovies
+print(encontrar_buenas_peliculas(listacasting,director,listamovies))
