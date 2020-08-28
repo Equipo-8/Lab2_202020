@@ -49,8 +49,8 @@ def loadCSVFile (file, sep=";"):
         Borra la lista e informa al usuario
     Returns: None  
     """
-    #lst = lt.newList("ARRAY_LIST") #Usando implementacion arraylist
-    lst = lt.newList() #Usando implementacion linkedlist
+    lst = lt.newList("ARRAY_LIST") #Usando implementacion arraylist
+    #lst = lt.newList() #Usando implementacion linkedlist
     print("Cargando archivo ....")
     t1_start = process_time() #tiempo inicial
     dialect = csv.excel()
@@ -157,19 +157,19 @@ def main():
         inputs =input('Seleccione una opción para continuar\n') #leer opción ingresada
         if len(inputs)>0:
             if int(inputs[0])==1: #opcion 1
-                listamovies = loadCSVFile("Data/AllMoviesCastingRaw.csv") #llamar funcion cargar datos
-                print("Datos cargados, ",lista['size']," elementos cargados")
+                listacasting = loadCSVFile("Data/AllMoviesCastingRaw.csv") #llamar funcion cargar datos
+                print("Datos cargados, ",listacasting['size']," elementos cargados")
             elif int(inputs[0])==2: #opcion2
-                 listacasting = loadCSVFile("Data/AllMoviesDetailsCleaned.csv")
-                 print("Datos cargados, ",lista['size']," elementos cargados")
-            elif int(inputs[0]==3):#opcion3
-                    if listacasting == None or listamovies == None:
-                        print("esta lista esta vacia:(" )
-                    else: 
-                        director=input("Inserta el nombre del director a consultar: ")
-                        goodmovies=encontrar_buenas_peliculas(listamovies,listacasting,director)
-                        print("Las buenas películas de "+director+" son: "+goodmovies[0])
-                        print("El ranking promedio de las mismas es: "+goodmovies[1])
+                 listamovies = loadCSVFile("Data/AllMoviesDetailsCleaned.csv")
+                 print("Datos cargados, ",listamovies['size']," elementos cargados")
+            elif int(inputs[0])==3:#opcion3
+                if listacasting == None or listamovies == None:
+                    print("esta lista esta vacia:(" )
+                else: 
+                    director=input("Inserta el nombre del director a consultar: ")
+                    goodmovies=encontrar_buenas_peliculas(listamovies,listacasting,director)
+                    print("Las buenas películas de "+director+" son: "+str(goodmovies[0]))
+                    print("El ranking promedio de las mismas es: "+str(goodmovies[1]))
             elif int(inputs[0]==4):#opcion4
                    if listacasting == None or listamovies == None:
                         print("esta lista esta vacia:(" )
