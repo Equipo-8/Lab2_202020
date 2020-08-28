@@ -109,21 +109,17 @@ def crear_ranking_peliculas(peliculas,n_peliculas,CoA,ascOdesc):
     if CoA == True:
         if ascOdesc == True:
             me.mergesort(peliculas,ordenarCountAsc)
-
         elif ascOdesc == False:
-             me.mergesort(peliculas,ordenarCountDesc)
-            
+             me.mergesort(peliculas,ordenarCountDesc)   
     elif CoA== False:
         if ascOdesc ==True:
             me.mergesort(peliculas,ordenarAverageAsc)
         elif ascOdesc == False:
-             me.mergesort((peliculas, ordenarAverageDesc))
-
+             me.mergesort(peliculas, ordenarAverageDesc)
     while n_peliculas != -1 and it.hasNext(iterador):
-            n_peliculas =- -1 
+            n_peliculas =- 1
             movie = it.next(iterador)
             lista_return.append(movie)
-
     return lista_return
             
 
@@ -209,14 +205,15 @@ def main():
         inputs =input('Seleccione una opción para continuar\n') #leer opción ingresada
         if len(inputs)>0:
             if int(inputs[0])==1: #opcion 1
-                listacasting = loadCSVFile("Data/AllMoviesCastingRaw.csv") #llamar funcion cargar datos
+                listacasting = loadCSVFile("Data/MoviesCastingRaw-small.csv") #llamar funcion cargar datos
                 print("Datos cargados, ",listacasting['size']," elementos cargados")
             elif int(inputs[0])==2: #opcion2
-                 listamovies = loadCSVFile("Data/AllMoviesDetailsCleaned.csv")
+                 listamovies = loadCSVFile("Data/SmallMoviesDetailsCleaned.csv")
                  print("Datos cargados, ",listamovies['size']," elementos cargados")
             elif int(inputs[0])==3:#opcion3
                 if listacasting == None or listamovies == None:
                     print("esta lista esta vacia:(" )
+
                 else: 
                     director=input("Inserta el nombre del director a consultar: ")
                     goodmovies=encontrar_buenas_peliculas(listamovies,listacasting,director)
@@ -231,24 +228,27 @@ def main():
                         
                         while 10>cantidad:
                             print("la cantidad debe ser mayor a 10.")
-                            cantidad=int(input("Escriba la cantidad de peliculas que quiere en el ranking"))
-                        AoC=input("Escriba Averague, de lo contrario escriba Count:").title()
-                        ascOdesc= input("Segun el orden que quiera escriba ascendente o descendente:").title()
+                            cantidad=int(input("Escriba la cantidad de peliculas que quiere en el ranking: "))
+                        AoC=input("Escriba Averague, de lo contrario escriba Count: ").title()
+                        ascOdesc= input("Segun el orden que quiera escriba ascendente o descendente: ").title()
                         if AoC == "Averague":
                             if ascOdesc == "Ascendente":
-                                lista_final=crear_ranking_peliculas(listamovies,cantidad,True,True)
+                                lista_final=crear_ranking_peliculas(listamovies,cantidad,False,False)
                             elif ascOdesc == "Descendente":
-                                lista_final=crear_ranking_peliculas(listamovies,cantidad,True,False)
+                                lista_final=crear_ranking_peliculas(listamovies,cantidad,False,True)
                             
                         elif AoC == "Count":
                             if ascOdesc == "Ascendente":
-                                lista_final=crear_ranking_peliculas(listamovies,cantidad,False,True)
+                                lista_final=crear_ranking_peliculas(listamovies,cantidad,True,False)
                             elif ascOdesc == "Descendente":
-                                lista_final=crear_ranking_peliculas(listamovies,cantidad,False,False)
+                                lista_final=crear_ranking_peliculas(listamovies,cantidad,True,True)
                         if len(lista_final)>0:
                             print("El ranking de películas es: ",lista_final)
-                    
+
+
                         
+
+
                         
                           
             elif int(inputs[0]==5):#opcion5
