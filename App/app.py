@@ -134,6 +134,37 @@ def entender_genero(peliculas,genero):
             promedio_y_peliculas[1]+=float(pelicula["vote_average"])
     promedio_y_peliculas[1]=promedio_y_peliculas[1]/promedio_y_peliculas[0]
     return promedio_y_peliculas
+
+
+def crear_ranking_genero(peliculas,n_peliculas,genero,CoA,ascOdesc):
+    lista_ranking=[0,0,[]]
+    iterador=it.newIterator(peliculas)
+    if CoA == True:
+        if ascOdesc == True:
+            me.mergesort(peliculas,ordenarCountAsc)
+        elif ascOdesc == False:
+             me.mergesort(peliculas,ordenarCountDesc)   
+    elif CoA== False:
+        if ascOdesc ==True:
+            me.mergesort(peliculas,ordenarAverageAsc)
+        elif ascOdesc == False:
+             me.mergesort(peliculas, ordenarAverageDesc)
+    while n_peliculas != -1 and it.hasNext(iterador):
+            pelicula=it.next(iterador)
+            if genero.lower() in pelicula["genres"].lower():
+                n_peliculas-= 1
+                lista_ranking[2].append(pelicula)
+                lista_ranking[0]+=1
+                lista_ranking[1]+=float(pelicula["vote_average"])
+    lista_ranking[1]=lista_ranking[1]/lista_ranking[0]
+    return lista_ranking
+                
+        
+           
+        
+
+
+
          
 
     
@@ -230,7 +261,6 @@ def main():
             elif int(inputs[0])==3:#opcion3
                 if listacasting == None or listamovies == None:
                     print("esta lista esta vacia:(" )
-
                 else: 
                     director=input("Inserta el nombre del director a consultar: ")
                     goodmovies=encontrar_buenas_peliculas(listamovies,listacasting,director)
@@ -240,9 +270,7 @@ def main():
                    if listacasting == None or listamovies == None:
                         print("esta lista esta vacia:(" )
                    else:
-
-                        cantidad = int(input("escriba la cantidad de películas que quiere en el ranking, debe ser mayor o igual a 10: "))
-                        
+                        cantidad = int(input("escriba la cantidad de películas que quiere en el ranking, debe ser mayor o igual a 10: "))                        
                         while 10>cantidad:
                             print("la cantidad debe ser mayor a 10.")
                             cantidad=int(input("Escriba la cantidad de peliculas que quiere en el ranking: "))
@@ -252,8 +280,7 @@ def main():
                             if ascOdesc == "Ascendente":
                                 lista_final=crear_ranking_peliculas(listamovies,cantidad,False,False)
                             elif ascOdesc == "Descendente":
-                                lista_final=crear_ranking_peliculas(listamovies,cantidad,False,True)
-                            
+                                lista_final=crear_ranking_peliculas(listamovies,cantidad,False,True)                           
                         elif AoC == "Count":
                             if ascOdesc == "Ascendente":
                                 lista_final=crear_ranking_peliculas(listamovies,cantidad,True,False)
@@ -261,17 +288,21 @@ def main():
                                 lista_final=crear_ranking_peliculas(listamovies,cantidad,True,True)
                         if len(lista_final)>0:
                             print("El ranking de películas es: ",lista_final)
-
-
-                        
-
-
-                        
                           
             elif int(inputs[0])==5:#opcion5
                  if listacasting == None or listamovies == None:
                      print("esta lista esta vacia:(" )
                  else: 
+                      print(None)
+                        
+                                        
+
+
+                     
+            elif int(inputs[0])==6:#opcion6
+                if listacasting == None or listamovies == None:
+                     print("esta lista esta vacia:(" )
+                else: 
                      genero=input("Digite el genero de la película: ").title()                
                      entender_genero1=entender_genero(listamovies,genero)
                      print("El numero de peliculas encontradas es de: ",entender_genero1[0])
@@ -282,21 +313,32 @@ def main():
 
                      elif listasn== "n":
                          print(None)
-                        
-                                        
-
-
-                     
-            elif int(inputs[0]==6):#opcion6
-                 if listacasting == None or listamovies == None:
-                     print("esta lista esta vacia:(" )
-                 else: 
-                     print("Las caracteristicas del geénero son: ", lista)
             elif int(inputs[0])==7:#opcion7
                  if listacasting == None or listamovies == None:
                      print("esta lista esta vacia:(" )
                  else: 
-                     print("La lista con el ranking del género es: ", lista)
+                      cantidad = int(input("escriba la cantidad de películas que quiere en el ranking, debe ser mayor o igual a 10: "))                        
+                      genero=input("Escriba el genero con el quiera crear el ranking: ")
+                      while 10>cantidad:
+                          print("la cantidad debe ser mayor a 10.")
+                          cantidad=int(input("Escriba la cantidad de peliculas que quiere en el ranking: "))
+                      AoC=input("Escriba Averague, de lo contrario escriba Count: ").title()
+                      ascOdesc= input("Segun el orden que quiera escriba ascendente o descendente: ").title()
+                      if AoC == "Averague":
+                          if ascOdesc == "Ascendente":
+                              lista_final=crear_ranking_genero(listamovies,cantidad,genero,False,False)
+                          elif ascOdesc == "Descendente":
+                              lista_final=crear_ranking_genero(listamovies,cantidad,genero,False,True)                           
+                      elif AoC == "Count":
+                          if ascOdesc == "Ascendente":
+                              lista_final=crear_ranking_genero(listamovies,cantidad,genero,True,False)
+                          elif ascOdesc == "Descendente":
+                              lista_final=crear_ranking_genero(listamovies,cantidad,genero,True,True)
+                      if len(lista_final) >0:
+                          print("El número de las películas encontradas del genero, ",genero,"fue de: ",lista_final[0])
+                          print("El promedio de la votación de las mismas fue de: ",lista_final[1])
+                          print("Y el ranking es este: ",lista_final[2])
+                      
             elif int(inputs[0])==8:#opcion8
                 if listacasting==None or listamovies==None or listacasting['size']==0 or listamovies['size']==0: #obtener la longitud de la lista
                     print("La lista esta vacía")    
