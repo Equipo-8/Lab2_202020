@@ -117,10 +117,27 @@ def crear_ranking_peliculas(peliculas,n_peliculas,CoA,ascOdesc):
         elif ascOdesc == False:
              me.mergesort(peliculas, ordenarAverageDesc)
     while n_peliculas != -1 and it.hasNext(iterador):
-            n_peliculas =- 1
+            n_peliculas-= 1
             movie = it.next(iterador)
             lista_return.append(movie)
     return lista_return
+
+def entender_genero(peliculas,genero):
+    promedio_y_peliculas=[0,0,[]]
+    iteradorpeliculas= it.newIterator(peliculas)
+
+    while it.hasNext(iteradorpeliculas):
+        pelicula=it.next(iteradorpeliculas)
+        if genero.lower() in pelicula["genres"].lower():
+            promedio_y_peliculas[2].append(pelicula)
+            promedio_y_peliculas[0]+=1
+            promedio_y_peliculas[1]+=float(pelicula["vote_average"])
+    promedio_y_peliculas[1]=promedio_y_peliculas[1]/promedio_y_peliculas[0]
+    return promedio_y_peliculas
+         
+
+    
+        
             
 
 
@@ -251,11 +268,25 @@ def main():
 
                         
                           
-            elif int(inputs[0]==5):#opcion5
+            elif int(inputs[0])==5:#opcion5
                  if listacasting == None or listamovies == None:
                      print("esta lista esta vacia:(" )
                  else: 
-                     print("Los datos del actor son: ", lista)
+                     genero=input("Digite el genero de la película: ").title()                
+                     entender_genero1=entender_genero(listamovies,genero)
+                     print("El numero de peliculas encontradas es de: ",entender_genero1[0])
+                     print("El promedio de la votacion de las películas es de: ",entender_genero1[1])
+                     listasn=input("Si quiere que se muestre en pantalla l lista de películas, presione S, de lo contratio presione n: ").lower()
+                     if listasn == "s":
+                         print("La lista de las películas es la siguiente: ",entender_genero1[2])
+
+                     elif listasn== "n":
+                         print(None)
+                        
+                                        
+
+
+                     
             elif int(inputs[0]==6):#opcion6
                  if listacasting == None or listamovies == None:
                      print("esta lista esta vacia:(" )
