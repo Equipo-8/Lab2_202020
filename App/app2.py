@@ -39,7 +39,7 @@ def loadCSVFile (file, sep=";"):
     return lst
 
 listamovies=(loadCSVFile("Data/AllMoviesDetailsCleaned.csv"))
-#listacasting=(loadCSVFile("Data/AllMoviesCastingRaw.csv"))
+listacasting=(loadCSVFile("Data/AllMoviesCastingRaw.csv"))
 director="Quentin Tarantino"
 
 
@@ -65,6 +65,7 @@ def encontrar_buenas_peliculas(peliculas,casting,director,needoflist):
             goodmovies[2].append(movie)
     goodmovies[1]=round(goodmovies[1]/goodmovies[0],2)
     return goodmovies
+
 def conocer_autor(peliculas,casting,actor):
     iteradorcasting=it.newIterator(casting)
     idmovies=[]
@@ -75,11 +76,6 @@ def conocer_autor(peliculas,casting,actor):
         movie=it.next(iteradorcasting)
         if actor == movie["actor1_name"] or actor == movie["actor2_name"] or actor == movie["actor3_name"] or actor == movie["actor4_name"] or actor == movie["actor5_name"]:
             idmovies.append((position,movie["director_name"]))
-            print(movie["actor1_name"])
-            print(movie["actor2_name"])
-            print(movie["actor3_name"])
-            print(movie["actor4_name"])
-            print(movie["actor5_name"])
         position+=1
     for each in idmovies:
         movie=lt.getElement(peliculas,each[0])
@@ -95,17 +91,4 @@ def conocer_autor(peliculas,casting,actor):
             most[1]=moviesautor[3][each[1]]
     moviesautor[1]=round(moviesautor[1]/moviesautor[0],2)
     return [moviesautor[0],moviesautor[1],moviesautor[2],most[0]]
-
-def entender_genero(peliculas,genero):
-    promedio_y_peliculas=[0,0,[]]
-    iteradorpeliculas= it.newIterator(peliculas)
-
-    while it.hasNext(iteradorpeliculas):
-        pelicula=it.next(iteradorpeliculas)
-        if genero.lower() in pelicula["genres"].lower():
-            promedio_y_peliculas[2].append(pelicula)  
-            promedio_y_peliculas[0]+=1
-            promedio_y_peliculas[1]+=float(pelicula["vote_average"])
-    promedio_y_peliculas[1]=promedio_y_peliculas[1]/promedio_y_peliculas[0]
-    return promedio_y_peliculas
-print(entender_genero(listamovies,"Documentary")[1])
+print(conocer_autor(listamovies,listacasting,"Marisa Tomei"))
