@@ -66,10 +66,10 @@ def loadCSVFile (file, sep=";"):
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
     return lst
 
-def encontrar_buenas_peliculas(peliculas,casting,director):
+def encontrar_buenas_peliculas(peliculas,casting,director,needoflist):
     iteradorcasting=it.newIterator(casting)
     idmovies=[]
-    goodmovies=[0,0]
+    goodmovies=[0,0,[]]
     position=0
     while it.hasNext(iteradorcasting):
         movie=it.next(iteradorcasting)
@@ -78,11 +78,42 @@ def encontrar_buenas_peliculas(peliculas,casting,director):
         position+=1
     for each in idmovies:
         movie=lt.getElement(peliculas,each)
-        if float(movie["vote_average"])>=6.0:
+        if not needoflist:
+            if float(movie["vote_average"])>=6.0:
+                goodmovies[0]+=1
+                goodmovies[1]+=float(movie["vote_average"])
+        elif needoflist:
             goodmovies[0]+=1
             goodmovies[1]+=float(movie["vote_average"])
+            goodmovies[2].append(movie)
     goodmovies[1]=round(goodmovies[1]/goodmovies[0],2)
     return goodmovies
+
+def conocer_autor(peliculas,casting,actor):
+    iteradorcasting=it.newIterator(casting)
+    idmovies=[]
+    most=["DirectorName",0]
+    moviesautor=[0,0,[],{}]
+    position=0
+    while it.hasNext(iteradorcasting):
+        movie=it.next(iteradorcasting)
+        if actor == movie["actor1_name"] or actor == movie["actor2_name"] or actor == movie["actor3_name"] or actor == movie["actor4_name"] or actor == movie["actor5_name"]:
+            idmovies.append((position,movie["director_name"]))
+        position+=1
+    for each in idmovies:
+        movie=lt.getElement(peliculas,each[0])
+        moviesautor[0]+=1
+        moviesautor[1]+=float(movie["vote_average"])
+        moviesautor[2].append(movie)
+        if each[1] in moviesautor[3]:
+            moviesautor[3][each[1]]+=1
+        else:
+            moviesautor[3][each[1]]=1 
+        if moviesautor[3][each[1]]>most[1]:
+            most[0]=each[1]
+            most[1]=moviesautor[3][each[1]]
+    moviesautor[1]=round(moviesautor[1]/moviesautor[0],2)
+    return [moviesautor[0],moviesautor[1],moviesautor[2],most[0]]
 
 def printMenu():
     """
@@ -167,14 +198,14 @@ def main():
                     print("esta lista esta vacia:(" )
                 else: 
                     director=input("Inserta el nombre del director a consultar: ")
-                    goodmovies=encontrar_buenas_peliculas(listamovies,listacasting,director)
+                    goodmovies=encontrar_buenas_peliculas(listamovies,listacasting,director,False)
                     print("Las buenas películas de "+director+" son: "+str(goodmovies[0]))
                     print("El ranking promedio de las mismas es: "+str(goodmovies[1]))
             elif int(inputs[0]==4):#opcion4
                    if listacasting == None or listamovies == None:
                         print("esta lista esta vacia:(" )
                    else: 
-                         print("El ranking de películas es: ", lista)  
+                         print("El ranking de películas es: ", listacasting) 
             elif int(inputs[0]==5):#opcion5
                  if listacasting == None or listamovies == None:
                      print("esta lista esta vacia:(" )
