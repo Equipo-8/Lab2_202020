@@ -201,7 +201,7 @@ def printMenu():
     print("3- Cargar buenas películas")
     print("4- Crear ranking de películas")
     print("5- Conocer a un director")
-    print("5- conocer a un actor")
+    print("5- Conocer a un actor")
     print("6- Entender un género cinematográgico")
     print("7- Crear ranking del género")
     print("8- Contar los elementos de la Lista")
