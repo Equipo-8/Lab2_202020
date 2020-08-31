@@ -201,12 +201,12 @@ def printMenu():
     print("3- Cargar buenas películas")
     print("4- Crear ranking de películas")
     print("5- Conocer a un director")
-    print("5- Conocer a un actor")
-    print("6- Entender un género cinematográgico")
-    print("7- Crear ranking del género")
-    print("8- Contar los elementos de la Lista")
-    print("9- Contar elementos filtrados por palabra clave")
-    print("10- Consultar elementos a partir de dos listas")
+    print("6- Conocer a un actor")
+    print("7- Entender un género cinematográgico")
+    print("8- Crear ranking del género")
+    print("9- Contar los elementos de la Lista")
+    print("10- Contar elementos filtrados por palabra clave")
+    print("11- Consultar elementos a partir de dos listas")
     print("0- Salir")
 
 def countElementsFilteredByColumn(criteria, column, lst):
@@ -264,10 +264,10 @@ def main():
         inputs =input('Seleccione una opción para continuar\n') #leer opción ingresada
         if len(inputs)>0:
             if int(inputs[0])==1: #opcion 1
-                listacasting = loadCSVFile("Data/AllMoviesCastingRaw.csv") #llamar funcion cargar datos
+                listacasting = loadCSVFile("Data/MoviesCastingRaw-small.csv") #llamar funcion cargar datos
                 print("Datos cargados, ",listacasting['size']," elementos cargados")
             elif int(inputs[0])==2: #opcion2
-                 listamovies = loadCSVFile("Data/AllMoviesDetailsCleaned.csv")
+                 listamovies = loadCSVFile("Data/SmallMoviesDetailsCleaned.csv")
                  print("Datos cargados, ",listamovies['size']," elementos cargados")
             elif int(inputs[0])==3:#opcion3
                 if listacasting == None or listamovies == None:
@@ -277,7 +277,7 @@ def main():
                     goodmovies=encontrar_buenas_peliculas(listamovies,listacasting,director,False)
                     print("Las buenas películas de "+director+" son: "+str(goodmovies[0]))
                     print("Los votos promedio de las mismas es: "+str(goodmovies[1]))
-            elif int(inputs[0]==4):#opcion5
+            elif int(inputs[0])==4:#opcion4
                         cantidad = int(input("Escriba la cantidad de películas que quiere en el ranking, debe ser mayor o igual a 10: "))                        
                         while 10>cantidad:
                             print("La cantidad debe ser mayor a 10.")
