@@ -59,7 +59,7 @@ def lstpeliculas(peliculas):
 
 movies=peliculas()
 lstmovies=lstpeliculas(movies)
-print(movies)
+
 
 
 def less(element1, element2):
