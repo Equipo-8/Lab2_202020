@@ -38,15 +38,15 @@ def loadCSVFile (file, sep=";"):
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
     return lst
 
-listamovies=(loadCSVFile("Data/AllMoviesCastingRaw.csv"))
-listacasting=(loadCSVFile("Data/AllMoviesDetailsCleaned.csv"))
+listamovies=(loadCSVFile("Data/AllMoviesDetailsCleaned.csv"))
+listacasting=(loadCSVFile("Data/AllMoviesCastingRaw.csv"))
 director="Quentin Tarantino"
 
 
-def encontrar_buenas_peliculas(peliculas,casting,director):
+def encontrar_buenas_peliculas(peliculas,casting,director,needoflist):
     iteradorcasting=it.newIterator(casting)
     idmovies=[]
-    goodmovies=[0,0]
+    goodmovies=[0,0,[]]
     position=0
     while it.hasNext(iteradorcasting):
         movie=it.next(iteradorcasting)
@@ -55,9 +55,40 @@ def encontrar_buenas_peliculas(peliculas,casting,director):
         position+=1
     for each in idmovies:
         movie=lt.getElement(peliculas,each)
-        if float(movie["vote_average"])>=6.0:
+        if not needoflist:
+            if float(movie["vote_average"])>=6.0:
+                goodmovies[0]+=1
+                goodmovies[1]+=float(movie["vote_average"])
+        elif needoflist:
             goodmovies[0]+=1
             goodmovies[1]+=float(movie["vote_average"])
+            goodmovies[2].append(movie)
     goodmovies[1]=round(goodmovies[1]/goodmovies[0],2)
     return goodmovies
-print(encontrar_buenas_peliculas(listacasting,director,listamovies))
+
+def conocer_autor(peliculas,casting,actor):
+    iteradorcasting=it.newIterator(casting)
+    idmovies=[]
+    most=["DirectorName",0]
+    moviesautor=[0,0,[],{}]
+    position=0
+    while it.hasNext(iteradorcasting):
+        movie=it.next(iteradorcasting)
+        if actor == movie["actor1_name"] or actor == movie["actor2_name"] or actor == movie["actor3_name"] or actor == movie["actor4_name"] or actor == movie["actor5_name"]:
+            idmovies.append((position,movie["director_name"]))
+        position+=1
+    for each in idmovies:
+        movie=lt.getElement(peliculas,each[0])
+        moviesautor[0]+=1
+        moviesautor[1]+=float(movie["vote_average"])
+        moviesautor[2].append(movie)
+        if each[1] in moviesautor[3]:
+            moviesautor[3][each[1]]+=1
+        else:
+            moviesautor[3][each[1]]=1 
+        if moviesautor[3][each[1]]>most[1]:
+            most[0]=each[1]
+            most[1]=moviesautor[3][each[1]]
+    moviesautor[1]=round(moviesautor[1]/moviesautor[0],2)
+    return [moviesautor[0],moviesautor[1],moviesautor[2],most[0]]
+print(conocer_autor(listamovies,listacasting,"Marisa Tomei"))

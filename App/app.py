@@ -67,10 +67,10 @@ def loadCSVFile (file, sep=";"):
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
     return lst
 
-def encontrar_buenas_peliculas(peliculas,casting,director):
+def encontrar_buenas_peliculas(peliculas,casting,director,needoflist):
     iteradorcasting=it.newIterator(casting)
     idmovies=[]
-    goodmovies=[0,0]
+    goodmovies=[0,0,[]]
     position=0
     while it.hasNext(iteradorcasting):
         movie=it.next(iteradorcasting)
@@ -79,12 +79,44 @@ def encontrar_buenas_peliculas(peliculas,casting,director):
         position+=1
     for each in idmovies:
         movie=lt.getElement(peliculas,each)
-        if float(movie["vote_average"])>=6.0:
+        if not needoflist:
+            if float(movie["vote_average"])>=6.0:
+                goodmovies[0]+=1
+                goodmovies[1]+=float(movie["vote_average"])
+        elif needoflist:
             goodmovies[0]+=1
             goodmovies[1]+=float(movie["vote_average"])
-    goodmovies[1]=round(goodmovies[1]/goodmovies[0],2)
+            goodmovies[2].append(movie)
+    if goodmovies[0]!=0:
+        goodmovies[1]=round(goodmovies[1]/goodmovies[0],2)
     return goodmovies
 
+def conocer_autor(peliculas,casting,actor):
+    iteradorcasting=it.newIterator(casting)
+    idmovies=[]
+    most=["DirectorName",0]
+    moviesautor=[0,0,[],{}]
+    position=0
+    while it.hasNext(iteradorcasting):
+        movie=it.next(iteradorcasting)
+        if actor == movie["actor1_name"] or actor == movie["actor2_name"] or actor == movie["actor3_name"] or actor == movie["actor4_name"] or actor == movie["actor5_name"]:
+            idmovies.append((position,movie["director_name"]))
+        position+=1
+    for each in idmovies:
+        movie=lt.getElement(peliculas,each[0])
+        moviesautor[0]+=1
+        moviesautor[1]+=float(movie["vote_average"])
+        moviesautor[2].append(movie)
+        if each[1] in moviesautor[3]:
+            moviesautor[3][each[1]]+=1
+        else:
+            moviesautor[3][each[1]]=1 
+        if moviesautor[3][each[1]]>most[1]:
+            most[0]=each[1]
+            most[1]=moviesautor[3][each[1]]
+    moviesautor[1]=round(moviesautor[1]/moviesautor[0],2)
+    return [moviesautor[0],moviesautor[1],moviesautor[2],most[0]]
+    
 def ordenarAverageAsc(mov1:dict,mov2:dict)->bool:
     if float(mov1['vote_average'])>float(mov2['vote_average']):
         return True
@@ -134,20 +166,30 @@ def entender_genero(peliculas,genero):
             promedio_y_peliculas[1]+=float(pelicula["vote_average"])
     promedio_y_peliculas[1]=promedio_y_peliculas[1]/promedio_y_peliculas[0]
     return promedio_y_peliculas
-         
-
-    
-        
-            
 
 
-    
-
-
-    
-
-
-
+def crear_ranking_genero(peliculas,n_peliculas,genero,CoA,ascOdesc):
+    lista_ranking=[0,0,[]]
+    iterador=it.newIterator(peliculas)
+    if CoA == True:
+        if ascOdesc == True:
+            me.mergesort(peliculas,ordenarCountAsc)
+        elif ascOdesc == False:
+             me.mergesort(peliculas,ordenarCountDesc)   
+    elif CoA== False:
+        if ascOdesc ==True:
+            me.mergesort(peliculas,ordenarAverageAsc)
+        elif ascOdesc == False:
+             me.mergesort(peliculas, ordenarAverageDesc)
+    while n_peliculas != -1 and it.hasNext(iterador):
+            pelicula=it.next(iterador)
+            if genero.lower() in pelicula["genres"].lower():
+                n_peliculas-= 1
+                lista_ranking[2].append(pelicula)
+                lista_ranking[0]+=1
+                lista_ranking[1]+=float(pelicula["vote_average"])
+    lista_ranking[1]=lista_ranking[1]/lista_ranking[0]
+    return lista_ranking
 
 def printMenu():
     """
@@ -159,12 +201,12 @@ def printMenu():
     print("3- Cargar buenas películas")
     print("4- Crear ranking de películas")
     print("5- Conocer a un director")
-    print("5- conocer a un actor")
-    print("6- Entender un género cinematográgico")
-    print("7- Crear ranking del género")
-    print("8- Contar los elementos de la Lista")
-    print("9- Contar elementos filtrados por palabra clave")
-    print("10- Consultar elementos a partir de dos listas")
+    print("6- Conocer a un actor")
+    print("7- Entender un género cinematográgico")
+    print("8- Crear ranking del género")
+    print("9- Contar los elementos de la Lista")
+    print("10- Contar elementos filtrados por palabra clave")
+    print("11- Consultar elementos a partir de dos listas")
     print("0- Salir")
 
 def countElementsFilteredByColumn(criteria, column, lst):
@@ -230,30 +272,23 @@ def main():
             elif int(inputs[0])==3:#opcion3
                 if listacasting == None or listamovies == None:
                     print("esta lista esta vacia:(" )
-
                 else: 
                     director=input("Inserta el nombre del director a consultar: ")
-                    goodmovies=encontrar_buenas_peliculas(listamovies,listacasting,director)
+                    goodmovies=encontrar_buenas_peliculas(listamovies,listacasting,director,False)
                     print("Las buenas películas de "+director+" son: "+str(goodmovies[0]))
-                    print("El ranking promedio de las mismas es: "+str(goodmovies[1]))
+                    print("Los votos promedio de las mismas es: "+str(goodmovies[1]))
             elif int(inputs[0])==4:#opcion4
-                   if listacasting == None or listamovies == None:
-                        print("esta lista esta vacia:(" )
-                   else:
-
-                        cantidad = int(input("escriba la cantidad de películas que quiere en el ranking, debe ser mayor o igual a 10: "))
-                        
+                        cantidad = int(input("Escriba la cantidad de películas que quiere en el ranking, debe ser mayor o igual a 10: "))                        
                         while 10>cantidad:
-                            print("la cantidad debe ser mayor a 10.")
-                            cantidad=int(input("Escriba la cantidad de peliculas que quiere en el ranking: "))
-                        AoC=input("Escriba Averague, de lo contrario escriba Count: ").title()
-                        ascOdesc= input("Segun el orden que quiera escriba ascendente o descendente: ").title()
-                        if AoC == "Averague":
+                            print("La cantidad debe ser mayor a 10.")
+                            cantidad=int(input("Escriba la cantidad de películas que quiere en el ranking: "))
+                        AoC=input("Escriba Average, de lo contrario escriba Count: ").title()
+                        ascOdesc= input("Según el orden que quiera escriba ascendente o descendente: ").title()
+                        if AoC == "Average":
                             if ascOdesc == "Ascendente":
                                 lista_final=crear_ranking_peliculas(listamovies,cantidad,False,False)
                             elif ascOdesc == "Descendente":
-                                lista_final=crear_ranking_peliculas(listamovies,cantidad,False,True)
-                            
+                                lista_final=crear_ranking_peliculas(listamovies,cantidad,False,True)                           
                         elif AoC == "Count":
                             if ascOdesc == "Ascendente":
                                 lista_final=crear_ranking_peliculas(listamovies,cantidad,True,False)
@@ -261,42 +296,60 @@ def main():
                                 lista_final=crear_ranking_peliculas(listamovies,cantidad,True,True)
                         if len(lista_final)>0:
                             print("El ranking de películas es: ",lista_final)
-
-
-                        
-
-
-                        
                           
             elif int(inputs[0])==5:#opcion5
                  if listacasting == None or listamovies == None:
                      print("esta lista esta vacia:(" )
                  else: 
+                      director=input("Ingresa el nombre de un director: ")
+                      conocerdirector=encontrar_buenas_peliculas(listamovies,listacasting,director,True)
+                      print("La cantidad de películas dirigidas por "+director+" es "+str(conocerdirector[0]))
+                      print("El promedio de las películas "+str(conocerdirector[1]))
+                      answer=input("Deseas ver la lista de películas dirigidas por "+director+"?: Y/N")
+                      while answer.lower()!="y"and"n":
+                        answer=input("Deseas ver la lista de películas dirigidas por "+director+"?: Y/N")
+                      if answer.lower()=="y":
+                          print("Las películas dirigidas por "+director+" son:")
+                          print(conocerdirector[2])
+            elif int(inputs[0])==6:#opcion6
+                if listacasting == None or listamovies == None:
+                     print("esta lista esta vacia:(" )
+                else: 
                      genero=input("Digite el genero de la película: ").title()                
                      entender_genero1=entender_genero(listamovies,genero)
-                     print("El numero de peliculas encontradas es de: ",entender_genero1[0])
-                     print("El promedio de la votacion de las películas es de: ",entender_genero1[1])
+                     print("El número de peliculas encontradas es de: ",str(entender_genero1[0]))
+                     print("El promedio de la votación de las películas es de: ",str(entender_genero1[1]))
                      listasn=input("Si quiere que se muestre en pantalla l lista de películas, presione S, de lo contratio presione n: ").lower()
                      if listasn == "s":
                          print("La lista de las películas es la siguiente: ",entender_genero1[2])
-
                      elif listasn== "n":
                          print(None)
-                        
-                                        
-
-
-                     
-            elif int(inputs[0]==6):#opcion6
-                 if listacasting == None or listamovies == None:
-                     print("esta lista esta vacia:(" )
-                 else: 
-                     print("Las caracteristicas del geénero son: ", lista)
             elif int(inputs[0])==7:#opcion7
                  if listacasting == None or listamovies == None:
-                     print("esta lista esta vacia:(" )
+                     print("Esta lista esta vacia:(" ) 
                  else: 
-                     print("La lista con el ranking del género es: ", lista)
+                      cantidad = int(input("Escriba la cantidad de películas que quiere en el ranking, debe ser mayor o igual a 10: "))                        
+                      genero=input("Escriba el género con el quiera crear el ranking: ")
+                      while 10>cantidad:
+                          print("La cantidad debe ser mayor a 10.")
+                          cantidad=int(input("Escriba la cantidad de películas que quiere en el ranking: "))
+                      AoC=input("Escriba Average, de lo contrario escriba Count: ").title()
+                      ascOdesc= input("Según el orden que quiera escriba ascendente o descendente: ").title()
+                      if AoC == "Averague":
+                          if ascOdesc == "Ascendente":
+                              lista_final=crear_ranking_genero(listamovies,cantidad,genero,False,False)
+                          elif ascOdesc == "Descendente":
+                              lista_final=crear_ranking_genero(listamovies,cantidad,genero,False,True)                           
+                      elif AoC == "Count":
+                          if ascOdesc == "Ascendente":
+                              lista_final=crear_ranking_genero(listamovies,cantidad,genero,True,False)
+                          elif ascOdesc == "Descendente":
+                              lista_final=crear_ranking_genero(listamovies,cantidad,genero,True,True)
+                      if len(lista_final) >0:
+                          print("El número de las películas encontradas del genero, ",genero,"fue de: ",lista_final[0])
+                          print("El promedio de la votación de las mismas fue de: ",lista_final[1])
+                          print("Y el ranking es este: ",lista_final[2])
+                      
             elif int(inputs[0])==8:#opcion8
                 if listacasting==None or listamovies==None or listacasting['size']==0 or listamovies['size']==0: #obtener la longitud de la lista
                     print("La lista esta vacía")    
