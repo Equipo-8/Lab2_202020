@@ -59,8 +59,12 @@ def loadCSVFile (file, sep=";"):
     try:
         with open(file, encoding="utf-8") as csvfile:
             spamreader = csv.DictReader(csvfile, dialect=dialect)
+            cantidad=0
             for row in spamreader: 
                 lt.addLast(lst,row)
+                cantidad+=1
+                if cantidad==100000:
+                    break
     except:
         print("Hubo un error con la carga del archivo")
     t1_stop = process_time() #tiempo final
@@ -68,6 +72,7 @@ def loadCSVFile (file, sep=";"):
     return lst
 
 def encontrar_buenas_peliculas(peliculas,casting,director,needoflist):
+    t1_start = process_time() #tiempo inicial
     iteradorcasting=it.newIterator(casting)
     idmovies=[]
     goodmovies=[0,0,[]]
@@ -89,9 +94,12 @@ def encontrar_buenas_peliculas(peliculas,casting,director,needoflist):
             goodmovies[2].append(movie)
     if goodmovies[0]!=0:
         goodmovies[1]=round(goodmovies[1]/goodmovies[0],2)
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
     return goodmovies
 
 def conocer_autor(peliculas,casting,actor):
+    t1_start = process_time() #tiempo inicial
     iteradorcasting=it.newIterator(casting)
     idmovies=[]
     most=["DirectorName",0]
@@ -115,6 +123,8 @@ def conocer_autor(peliculas,casting,actor):
             most[0]=each[1]
             most[1]=moviesautor[3][each[1]]
     moviesautor[1]=round(moviesautor[1]/moviesautor[0],2)
+    t1_stop = process_time() #tiempo inicial
+    print("Tardó "+str(t1_stop-t1_start)+" segundos")
     return [moviesautor[0],moviesautor[1],moviesautor[2],most[0]]
     
 def ordenarAverageAsc(mov1:dict,mov2:dict)->bool:
@@ -155,6 +165,7 @@ def crear_ranking_peliculas(peliculas,n_peliculas,CoA,ascOdesc):
     return lista_return
 
 def entender_genero(peliculas,genero):
+    t1_start = process_time() #tiempo final
     promedio_y_peliculas=[0,0,[]]
     iteradorpeliculas= it.newIterator(peliculas)
 
@@ -165,6 +176,8 @@ def entender_genero(peliculas,genero):
             promedio_y_peliculas[0]+=1
             promedio_y_peliculas[1]+=float(pelicula["vote_average"])
     promedio_y_peliculas[1]=promedio_y_peliculas[1]/promedio_y_peliculas[0]
+    t1_stop = process_time() #tiempo final
+    print("Tardó "+str(t1_stop-t1_start)+" segundos")
     return promedio_y_peliculas
 
 
@@ -264,10 +277,10 @@ def main():
         inputs =input('Seleccione una opción para continuar\n') #leer opción ingresada
         if len(inputs)>0:
             if int(inputs[0])==1: #opcion 1
-                listacasting = loadCSVFile("Data/MoviesCastingRaw-small.csv") #llamar funcion cargar datos
+                listacasting = loadCSVFile("Data/AllMoviesCastingRaw.csv") #llamar funcion cargar datos
                 print("Datos cargados, ",listacasting['size']," elementos cargados")
             elif int(inputs[0])==2: #opcion2
-                 listamovies = loadCSVFile("Data/SmallMoviesDetailsCleaned.csv")
+                 listamovies = loadCSVFile("Data/AllMoviesDetailsCleaned.csv")
                  print("Datos cargados, ",listamovies['size']," elementos cargados")
             elif int(inputs[0])==3:#opcion3
                 if listacasting == None or listamovies == None:
@@ -322,28 +335,10 @@ def main():
             elif int(inputs[0])==7:#opcion7
                  if listacasting == None or listamovies == None:
                      print("Esta lista esta vacia:(" ) 
-                 else: 
-                      cantidad = int(input("Escriba la cantidad de películas que quiere en el ranking, debe ser mayor o igual a 10: "))                        
+                 else:                        
                       genero=input("Escriba el género con el quiera crear el ranking: ")
-                      while 10>cantidad:
-                          print("La cantidad debe ser mayor a 10.")
-                          cantidad=int(input("Escriba la cantidad de películas que quiere en el ranking: "))
-                      AoC=input("Escriba Average, de lo contrario escriba Count: ").title()
-                      ascOdesc= input("Según el orden que quiera escriba ascendente o descendente: ").title()
-                      if AoC == "Average":
-                          if ascOdesc == "Ascendente":
-                              lista_final=crear_ranking_genero(listamovies,cantidad,genero,False,False)
-                          elif ascOdesc == "Descendente":
-                              lista_final=crear_ranking_genero(listamovies,cantidad,genero,False,True)                           
-                      elif AoC == "Count":
-                          if ascOdesc == "Ascendente":
-                              lista_final=crear_ranking_genero(listamovies,cantidad,genero,True,False)
-                          elif ascOdesc == "Descendente":
-                              lista_final=crear_ranking_genero(listamovies,cantidad,genero,True,True)
-                      if len(lista_final) >0:
-                          print("El número de las películas encontradas del genero, ",genero,"fue de: ",lista_final[0])
-                          print("El promedio de la votación de las mismas fue de: ",lista_final[1])
-                          print("Y el ranking es este: ",lista_final[2])
+                      entender_genero(listamovies,genero)
+                      
                       
             elif int(inputs[0])==8:#opcion8
                 if listacasting==None or listamovies==None or listacasting['size']==0 or listamovies['size']==0: #obtener la longitud de la lista
